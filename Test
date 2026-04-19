@@ -1,6 +1,62 @@
 local Players, TCS = game:GetService("Players"), game:GetService("TextChatService")
 local lp = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local function showHelpGUI()
+    if game.CoreGui:FindFirstChild("HelpGUI") then
+        game.CoreGui.HelpGUI:Destroy()
+    end
+
+    local gui = Instance.new("ScreenGui", game.CoreGui)
+    gui.Name = "HelpGUI"
+
+    local frame = Instance.new("Frame", gui)
+    frame.Size = UDim2.new(0, 300, 0, 350)
+    frame.Position = UDim2.new(0.5, -150, 0.5, -175)
+    frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+    frame.BorderSizePixel = 0
+
+    local title = Instance.new("TextLabel", frame)
+    title.Size = UDim2.new(1,0,0,40)
+    title.Text = "COMMANDS"
+    title.TextColor3 = Color3.new(1,1,1)
+    title.BackgroundTransparency = 1
+    title.TextScaled = true
+
+    local text = Instance.new("TextLabel", frame)
+    text.Size = UDim2.new(1,-10,1,-50)
+    text.Position = UDim2.new(0,5,0,45)
+    text.BackgroundTransparency = 1
+    text.TextColor3 = Color3.new(1,1,1)
+    text.TextXAlignment = Enum.TextXAlignment.Left
+    text.TextYAlignment = Enum.TextYAlignment.Top
+    text.TextWrapped = true
+    text.TextScaled = false
+    text.Text = [[
+!start / !stop
+!target NAME
+!delay NUM
+!mode spam/clean/loaded
+!say TEXT
+!spam TEXT
+!rgb on/off
+!hidegui / !showgui
+!rejoin
+!kickme
+!reset
+!admins
+]]
+
+    -- ❌ Close button
+    local close = Instance.new("TextButton", frame)
+    close.Size = UDim2.new(0,30,0,30)
+    close.Position = UDim2.new(1,-35,0,5)
+    close.Text = "X"
+    close.BackgroundColor3 = Color3.fromRGB(255,50,50)
+
+    close.MouseButton1Click:Connect(function()
+        gui:Destroy()
+    end)
+end
 local RUN = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
@@ -581,6 +637,87 @@ if Terrain then
 	Terrain.WaterReflectance = 0
 	Terrain.WaterTransparency = 0
 end
+--// ADVANCED ANTI-LAG BOOSTER (OPTIMIZED)
+
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+-- 🔻 Graphics low (safe)
+pcall(function()
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+end)
+
+-- 🔻 Lighting optimize
+Lighting.GlobalShadows = false
+Lighting.FogEnd = 1e9
+Lighting.Brightness = 1
+Lighting.EnvironmentDiffuseScale = 0
+Lighting.EnvironmentSpecularScale = 0
+
+-- 🔻 Terrain optimize
+local Terrain = Workspace:FindFirstChildOfClass("Terrain")
+if Terrain then
+    Terrain.WaterWaveSize = 0
+    Terrain.WaterWaveSpeed = 0
+    Terrain.WaterReflectance = 0
+    Terrain.WaterTransparency = 0
+end
+
+-- 🔻 Disable heavy effects (ONE TIME + smart refresh)
+local function cleanEffects()
+    for _, v in ipairs(Workspace:GetDescendants()) do
+        if v:IsA("ParticleEmitter")
+        or v:IsA("Trail")
+        or v:IsA("Smoke")
+        or v:IsA("Fire") then
+            v.Enabled = false
+        end
+    end
+end
+
+cleanEffects()
+
+-- refresh only sometimes (not spam loop)
+task.spawn(function()
+    while true do
+        task.wait(15) -- 🔥 pehle 5 tha → ab light load
+        cleanEffects()
+    end
+end)
+
+-- 🔻 Remove laggy textures (lighter)
+task.spawn(function()
+    while true do
+        for _,v in ipairs(Workspace:GetDescendants()) do
+            if v:IsA("Decal") or v:IsA("Texture") then
+                v.Transparency = 0.7
+            end
+        end
+        task.wait(20) -- 🔥 kam frequency
+    end
+end)
+
+-- 🔻 REMOVE this heavy RenderStepped spam ❌
+-- (ye actually lag badha raha tha)
+-- sethiddenproperty wala part hata diya
+
+-- 🔻 Garbage cleaner (optimized)
+task.spawn(function()
+    while true do
+        task.wait(3) -- 🔥 balanced
+        collectgarbage("step", 200)
+    end
+end)
+
+-- 🔻 FPS stabilize (micro throttle)
+task.spawn(function()
+    while true do
+        RunService.Heartbeat:Wait()
+    end
+end)
+
+print("✅ Optimized Anti-Lag Active")
 
 -- No Sit Script
 
