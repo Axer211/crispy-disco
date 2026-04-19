@@ -284,7 +284,7 @@ elseif msg == "!info" then
 print("AXER SPAMMER V1 | Admin:", sender.Name)
 
 elseif msg == "!help" then
-print("!start / !stop
+print([[!start / !stop
 !target NAME
 !delay NUM
 !mode spam/clean/loaded
@@ -295,7 +295,7 @@ print("!start / !stop
 !rejoin
 !kickme
 !reset
-!admins")
+!admins]])
 end
 end
 
